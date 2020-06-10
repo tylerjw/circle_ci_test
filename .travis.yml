@@ -1,0 +1,31 @@
+services:
+  - docker
+language: generic
+
+notifications:
+  email:
+    recipients:
+      - tyler@picknik.ai
+
+cache:
+  directories:
+    - $HOME/.ccache
+
+env:
+  global:
+    - ROS_DISTRO=melodic
+    - ROS_REPO=ros
+    - IMMEDIATE_TEST_OUTPUT=true
+    - CCACHE_DIR=$HOME/.ccache
+  matrix:
+      - CLANG_FORMAT_CHECK=file CLANG_FORMAT_VERSION=3.9
+      - CLANG_TIDY=pedantic
+      - CATKIN_LINT=pedantic
+      - UPSTREAM_WORKSPACE=upstream.rosinstall TARGET_CMAKE_ARGS='-DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wwrite-strings -Wunreachable-code -Wpointer-arith -Wredundant-decls"'
+
+install:
+  - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
+
+script:
+  - .industrial_ci/travis.sh
+
