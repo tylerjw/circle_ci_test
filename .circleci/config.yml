@@ -2,24 +2,18 @@
 version: 2.1
 
 executors:
-  docker-executor:
+  melodic:
     docker: 
-      - image: ros:melodic-ros-core
+      - image: tylerjw/circle_ci_test-melodic:0.0.1
     environment:
       IN_DOCKER: true
 
 jobs:
   build:
-    executor: docker-executor
-    environment:
-      ROS_DISTRO: melodic
-      ROS_REPO: ros
+    executor: melodic
     working_directory: ~/circle_ci_test
     steps:
       - checkout
-      - run:
-          name: Prepare environment
-          command: apt update && apt install -qq git
       - run:
           name: Checkout industrial_ci
           command: git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
