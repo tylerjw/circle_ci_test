@@ -36,11 +36,11 @@
    Desc: TODO(tylerjw):
 */
 
-#include <ci_test/class_name.h>
+#include <circle_ci_test/class_name.h>
 
 static const std::string LOGNAME = "class_name";
 
-namespace ci_test
+namespace circle_ci_test
 {
 ClassName::ClassName() : nh_("~")
 {
@@ -56,4 +56,4 @@ ClassName::ClassName() : nh_("~")
 
   ROS_DEBUG_STREAM_NAMED(LOGNAME, "Loaded.");
 }
-}  // end namespace ci_test
+}  // end namespace circle_ci_test

@@ -56,9 +56,9 @@
 #include <gtest/gtest.h>
 
 // Main class
-#include <ci_test/class_name.h>
+#include <circle_ci_test/class_name.h>
 
-namespace ci_test
+namespace circle_ci_test
 {
 class TestClassName : public ::testing::Test
 {
@@ -83,7 +83,7 @@ TEST_F(TestClassName, TestNameOfClass)
   ASSERT_TRUE(true);
 }
 
-}  // namespace ci_test
+}  // namespace circle_ci_test
 
 int main(int argc, char** argv)
 {

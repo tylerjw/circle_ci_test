@@ -46,7 +46,7 @@
 // Testing
 #include <gtest/gtest.h>
 
-namespace ci_test
+namespace circle_ci_test
 {
 class ClassName
 {
@@ -68,4 +68,4 @@ protected:
 typedef std::shared_ptr<ClassName> ClassNamePtr;
 typedef std::shared_ptr<const ClassName> ClassNameConstPtr;
 
-}  // namespace ci_test
+}  // namespace circle_ci_test
