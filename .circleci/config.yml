@@ -18,6 +18,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Prepare environment
+          command: apt update && apt install -qq git
+      - run:
           name: Checkout industrial_ci
           command: git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
       - run:
