@@ -8,11 +8,12 @@ jobs:
     environment:
       ROS_DISTRO: melodic
       ROS_REPO: ros
+    working_directory: ~/circle_ci_test
     steps:
       - checkout
       - run:
-          name: checkout-industrial-ci
+          name: Checkout industrial_ci
           command: git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
       - run:
-          name: run-industrial-ci
+          name: Run industrial_ci
           command: .industrial_ci/ci.sh
