@@ -7,6 +7,7 @@ jobs:
       image: ubuntu-1604:202004-01
     environment:
       DOCKER_IMAGE: tylerjw/circle_ci_test-melodic:0.0.1
+      UPSTREAM_WORKSPACE: upstream.rosinstall
     working_directory: ~/circle_ci_test
     steps:
       - checkout
