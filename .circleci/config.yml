@@ -5,8 +5,7 @@ jobs:
     docker:
       - image: tylerjw/circle_ci_test-melodic:0.0.1
     environment:
-      CCACHE_MAXSIZE: "500m"
-      CCACHE_PATH: ~/.ccache
+      CCACHE_MAXSIZE: 500M
     steps:
       # Checkout repo
       - restore_cache:
