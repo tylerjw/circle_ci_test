@@ -30,7 +30,7 @@ jobs:
           name: Checkout Upstream Workspace
           command: |
             mkdir -p ~/ws_upstream/src
-            wstool init --shallow ~/ws_upstream/src src/circle_ci_test/upstream.rosinstall
+            vcs import ~/ws_upstream/src --shallow --force --input src/circle_ci_test/upstream.rosinstall
             vcs export --exact ~/ws_upstream/src >> ~/ws_upstream/checksum.txt
       - save_cache:
           key: upstream_ws-v1-{{ .Branch }}-{{ .Revision }}
