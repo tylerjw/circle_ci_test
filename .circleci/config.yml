@@ -81,6 +81,7 @@ jobs:
           name: Build Upstream Workspace
           working_directory: ~/ws_upstream
           command: |
+            which gcc
             . /opt/ros/$ROS_DISTRO/setup.bash
             if [ ! -d ~/ws_upstream/build ]; then
               catkin config --install --extend /opt/ros/$ROS_DISTRO \
