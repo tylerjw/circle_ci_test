@@ -27,13 +27,15 @@ jobs:
             - upstream_ws-v1-{{ .Branch }}-
             - upstream_ws-v1-
       - run:
-          name: Checkout Upstream Workspace
+          name: Prepare Upstream Workspace
           command: |
             mkdir -p ~/ws_upstream/src
             vcs import ~/ws_upstream/src --shallow --force --input src/circle_ci_test/upstream.rosinstall
-            vcs export --exact ~/ws_upstream/src >> ~/ws_upstream/checksum.txt
       - save_cache:
           key: upstream_ws-v1-{{ .Branch }}-{{ .Revision }}
           paths:
             - "~/ws_upstream/src"
 
+      - run:
+          name: Install Upstream Dependencies
+          command: rosdep install -q -y --from-paths ~/ws_upstream/src --ignore-src
