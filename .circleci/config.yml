@@ -140,9 +140,8 @@ jobs:
             catkin build --catkin-make-args run_tests -- --no-status --summarize
             catkin_test_results
             mkdir ~/ws_target/test_results
-            for file in $(catkin_test_results | grep "\.xml:" | cut -d ":" -f1); do
+            for file in $(catkin_test_results --all | grep "\.xml:" | cut -d ":" -f1); do
               cp $file ~/ws_target/test_results
-              cat $file
             done
 
       - store_test_results:
