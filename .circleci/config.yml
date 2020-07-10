@@ -6,6 +6,7 @@ jobs:
       - image: tylerjw/circle_ci_test-melodic:0.0.1
     environment:
       CCACHE_MAXSIZE: 500M
+      MAKEFLAGS: "-j 2 -l 2"
     steps:
       # Checkout repo
       - restore_cache:
