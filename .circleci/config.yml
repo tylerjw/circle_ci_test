@@ -49,3 +49,19 @@ jobs:
           key: upstream_ws-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
           paths:
             - ~/ws_upstream
+
+      # Build Target Workspace
+      - run:
+          name: Install Target Dependencies
+          command: |
+            rosdep install -q -y --ignore-src \
+              --from-paths ~/ws_target/src \
+              --from-paths ~/ws_upstream/src
+      - run:
+          name: Build Target Workspace
+          working_directory: ~/ws_target
+          command: |
+            . /opt/ros/$ROS_DISTRO/setup.bash
+            catkin config --install --extend /opt/ros/$ROS_DISTRO \
+              --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
+            catkin build --no-status --summarize
