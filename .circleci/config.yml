@@ -65,7 +65,9 @@ jobs:
       # Print ccache stats
       - run:
           name: ccache stats
-          command: ccache -s
+          command: |
+            ccache -s
+            echo 'export PATH=/usr/lib/ccache:$PATH' >> $BASH_ENV
 
       # Build Upstream Workspace
       - restore_cache:

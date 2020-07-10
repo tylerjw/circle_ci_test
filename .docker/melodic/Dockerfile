@@ -33,5 +33,3 @@ RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
       --ignore-src && \
     rm -rf /opt/ros_ws && \
     rm -rf /var/lib/apt/lists/*
-
-RUN echo 'export PATH=/usr/lib/ccache:$PATH' >> /root/.bashrc
