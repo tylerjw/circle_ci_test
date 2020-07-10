@@ -22,7 +22,7 @@ jobs:
           paths:
             - ~/ws_target/src/circle_ci_test/.git
 
-      # Prepare Upstream Workspace
+      # Upstream Workspace
       - restore_cache:
           name: Restoring Cache upstream_ws-v1
           keys:
@@ -34,20 +34,19 @@ jobs:
             mkdir -p ~/ws_upstream/src
             wstool init 
             vcs import ~/ws_upstream/src --shallow --force --input ~/ws_target/src/circle_ci_test/upstream.rosinstall
-      - save_cache:
-          name: Saving Cache upstream_ws-v1
-          key: upstream_ws-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
-          paths:
-            - ~/ws_upstream/src
-
       - run:
           name: Install Upstream Dependencies
           command: rosdep install -q -y --from-paths ~/ws_upstream/src --ignore-src
-
       - run:
           name: Build Upstream Workspace
           working_directory: ~/ws_upstream
           command: |
-            catkin config --install --extends /opt/ros/$ROS_DISTRO \
+            . /opt/ros/$ROS_DISTRO/setup.bash
+            catkin config --install --extend /opt/ros/$ROS_DISTRO \
               --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
             catkin build --no-status --summarize
+      - save_cache:
+          name: Saving Cache upstream_ws-v1
+          key: upstream_ws-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
+          paths:
+            - ~/ws_upstream
