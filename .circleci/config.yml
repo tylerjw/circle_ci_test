@@ -9,6 +9,11 @@ jobs:
       BUIlD_MAKE_ARGS: "-j 2 -l 2"
       TZ: utc
     steps:
+      # Update apt for rosdep
+      - run:
+         name: apt update
+         command: apt update
+
       # Checkout repo
       - restore_cache:
           name: Restoring Cache source-v1
@@ -104,11 +109,13 @@ jobs:
           working_directory: ~/ws_target
           command: |
             . /opt/ros/$ROS_DISTRO/setup.bash
-            catkin config --install --extend /opt/ros/$ROS_DISTRO \
-              --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
-            catkin build --no-status --summarize --make-args $BUIlD_MAKE_ARGS
-            catkin build --no-status --summarize --make-args tests
-            ccache -s
+            if [ ! -d ~/ws_upstream/build ]; then
+              catkin config --install --extend /opt/ros/$ROS_DISTRO \
+                --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
+              catkin build --no-status --summarize --make-args $BUIlD_MAKE_ARGS
+              catkin build --no-status --summarize --make-args tests
+              ccache -s
+            fi
       - save_cache:
           name: Saving Cache target-bulid-v1
           key: target-build-v1-{{ checksum "~/ws_target/checksum.txt" }}
