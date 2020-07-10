@@ -66,6 +66,7 @@ jobs:
           working_directory: ~/ws_upstream
           command: |
             . /opt/ros/$ROS_DISTRO/setup.bash
+            ls -al ~/ws_upstream
             if [ -d ~/ws_upstream/build ]; then
               catkin config --install --extend /opt/ros/$ROS_DISTRO \
                 --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
