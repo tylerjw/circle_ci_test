@@ -10,9 +10,18 @@ jobs:
       TZ: utc
     steps:
       # Update apt for rosdep
+      - restore_cache:
+        name: Restoring apt-lists-v1
+        keys:
+          - apt-lists-v1-
       - run:
-         name: apt update
-         command: apt update
+          name: apt update
+          command: apt update
+      - save_cache:
+          name: Saveing Cache apt-lists-v1
+          key: apt-lists-v1-{{ epoc }}
+          paths:
+            - /var/lib/apt/lists
 
       # Checkout repo
       - restore_cache:
@@ -77,6 +86,7 @@ jobs:
               catkin build --no-status --summarize --make-args $BUIlD_MAKE_ARGS
               ccache -s
             fi
+            which gcc
       - save_cache:
           name: Saving Cache upstream-bulid-v1
           key: upstream-bulid-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
