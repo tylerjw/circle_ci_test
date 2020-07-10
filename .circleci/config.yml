@@ -16,7 +16,7 @@ jobs:
           - apt-lists-v1-
       - run:
           name: apt update
-          command: apt update
+          command: apt update -q
       - save_cache:
           name: Saveing Cache apt-lists-v1
           key: apt-lists-v1-{{ epoc }}
