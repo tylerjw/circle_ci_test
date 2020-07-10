@@ -116,11 +116,16 @@ jobs:
       #     paths:
       #       - ~/.ccache
 
+      # Print ccache stats
+      - run:
+          name: ccache stats
+          command: ccache -s
+
       # Run Target Tests
       - run:
           name: Run Target Tests
           working_directory: ~/ws_target
-          command: |
-            catkin build --catkin-make-args run_tests -- --no-status --summarize
-            catkin_test_results
-            ccache -s
+          command: catkin build --catkin-make-args run_tests -- --no-status --summarize
+
+      - store_artifacts:
+            path: ~/ws_target/build/moveit_core/test_results
