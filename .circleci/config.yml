@@ -1,19 +1,21 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
 jobs:
   build:
-    machine:
-      image: ubuntu-1604:202004-01
+    docker:
+      - image: tylerjw/circle_ci_test-melodic:0.0.1
     environment:
-      DOCKER_IMAGE: tylerjw/circle_ci_test-melodic:0.0.1
-      UPSTREAM_WORKSPACE: upstream.rosinstall
-    working_directory: ~/circle_ci_test
+      UPSTREAM_ROSINSTALL: upstream.rosinstall
+    working_directory: ~/ws_target
     steps:
-      - checkout
-      - run:
-          name: Checkout industrial_ci
-          command: git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
-      - run:
-          name: Run industrial_ci
-          command: .industrial_ci/ci.sh
+      # - restore_cache:
+      #     keys:
+      #       - source-v1-{{ .Branch }}-{{ .Revision }}
+      #       - source-v1-{{ .Branch }}-
+      #       - source-v1-
+      - checkout:
+          path: src/circle_ci_test
+      # - save_cache:
+      #     key: source-v1-{{ .Branch }}-{{ .Revision }}
+      #     paths:
+      #       - "src/circle_ci_test/.git"
