@@ -4,9 +4,6 @@ jobs:
   build:
     docker:
       - image: tylerjw/circle_ci_test-melodic:0.0.1
-    environment:
-      UPSTREAM_ROSINSTALL: upstream.rosinstall
-    working_directory: ~/ws_target
     steps:
       - restore_cache:
           name: Restoring Cache source-v1
@@ -15,12 +12,12 @@ jobs:
             - source-v1-{{ .Branch }}-
             - source-v1-
       - checkout:
-          path: src/circle_ci_test
+          path: ~/ws_target/src/circle_ci_test
       - save_cache:
           name: Saving Cache source-v1
           key: source-v1-{{ .Branch }}-{{ .Revision }}
           paths:
-            - "src/circle_ci_test/.git"
+            - ~/ws_target/src/circle_ci_test/.git
 
 
       - restore_cache:
@@ -38,8 +35,16 @@ jobs:
           name: Saving Cache upstream_ws-v1
           key: upstream_ws-v1-{{ .Branch }}-{{ .Revision }}
           paths:
-            - "~/ws_upstream/src"
+            - ~/ws_upstream/src
 
       - run:
           name: Install Upstream Dependencies
           command: rosdep install -q -y --from-paths ~/ws_upstream/src --ignore-src
+
+      - run:
+          name: Build Upstream Workspace
+          working_directory: ~/ws_upstream
+          command: |
+            catkin config --install --extends /opt/ros/$ROS_DISTRO \
+              --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
+            catkin build --no-status --summarize
