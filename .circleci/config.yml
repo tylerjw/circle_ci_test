@@ -66,10 +66,12 @@ jobs:
           working_directory: ~/ws_upstream
           command: |
             . /opt/ros/$ROS_DISTRO/setup.bash
-            catkin config --install --extend /opt/ros/$ROS_DISTRO \
-              --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
-            catkin build --no-status --summarize --make-args $BUIlD_MAKE_ARGS
-            ccache -s
+            if [ -d ~/ws_upstream/build ]; then
+              catkin config --install --extend /opt/ros/$ROS_DISTRO \
+                --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
+              catkin build --no-status --summarize --make-args $BUIlD_MAKE_ARGS
+              ccache -s
+            fi
       - save_cache:
           name: Saving Cache upstream-bulid-v1
           key: upstream-bulid-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
