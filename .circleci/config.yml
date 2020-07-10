@@ -14,12 +14,12 @@ jobs:
             - source-v1-{{ .Revision }}
             - source-v1-
       - checkout:
-          path: ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}
+          path: "~/ws_target/src/${CIRCLE_PROJECT_REPONAME}"
       - save_cache:
           name: Saving Cache source-v1
           key: source-v1-{{ .Revision }}
           paths:
-            - ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/.git
+            - "~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/.git"
 
 
       - restore_cache:
