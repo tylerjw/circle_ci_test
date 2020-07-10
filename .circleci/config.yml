@@ -47,6 +47,11 @@ jobs:
       #       - ccache-v1-{{ .Branch }}-{{ .Revision }}
       #       - ccache-v1-
 
+      # Print ccache stats
+      - run:
+          name: ccache stats
+          command: ccache -s
+
       # Build Upstream Workspace
       - restore_cache:
           name: Restoring Cache upstream-build-v1
@@ -125,7 +130,11 @@ jobs:
       - run:
           name: Run Target Tests
           working_directory: ~/ws_target
-          command: catkin build --catkin-make-args run_tests -- --no-status --summarize
+          command: |
+            catkin build --catkin-make-args run_tests -- --no-status --summarize
+            for file in $(catkin_test_results | grep "\.xml:" | cut -d ":" -f1); do
+              cat $file
+            done
 
       - store_artifacts:
             path: ~/ws_target/build/moveit_core/test_results
