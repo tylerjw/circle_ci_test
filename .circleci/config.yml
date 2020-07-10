@@ -41,11 +41,11 @@ jobs:
             - ~/ws_upstream
 
       # Restore ccace cache
-      # - restore_cache:
-      #     name: Restoring Cache ccache-v1
-      #     keys:
-      #       - ccache-v1-{{ .Branch }}-{{ .Revision }}
-      #       - ccache-v1-
+      - restore_cache:
+          name: Restoring Cache ccache-v1
+          keys:
+            - ccache-v1-{{ .Branch }}-{{ .Revision }}
+            - ccache-v1-
 
       # Print ccache stats
       - run:
@@ -115,11 +115,11 @@ jobs:
             - ~/ws_upstream/.catkin_tools
 
       # Save ccache
-      # - save_cache:
-      #     name: Saving Cache ccache-v1
-      #     key: ccache-v1-{{ .Branch }}-{{ .Revision }}
-      #     paths:
-      #       - ~/.ccache
+      - save_cache:
+          name: Saving Cache ccache-v1
+          key: ccache-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ~/.ccache
 
       # Print ccache stats
       - run:
