@@ -11,9 +11,9 @@ jobs:
     steps:
       # Update apt for rosdep
       - restore_cache:
-        name: Restoring apt-lists-v1
-        keys:
-          - apt-lists-v1-
+          name: Restoring apt-lists-v1
+          keys:
+            - apt-lists-v1-
       - run:
           name: apt update
           command: apt update -q
