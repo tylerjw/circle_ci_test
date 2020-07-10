@@ -139,10 +139,9 @@ jobs:
             . /opt/ros/$ROS_DISTRO/setup.bash
             catkin build --catkin-make-args run_tests -- --no-status --summarize
             catkin_test_results
-            mkdir ~/ws_target/test_results
+            mkdir -p ~/test_results
             for file in $(catkin_test_results --all | grep "\.xml:" | cut -d ":" -f1); do
-              cp $file ~/ws_target/test_results
+              cp $file ~/test_results
             done
-
       - store_test_results:
-            path: ~/ws_target/test_results
+            path: ~/test_results
