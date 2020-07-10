@@ -89,7 +89,6 @@ jobs:
               catkin build --no-status --summarize --make-args $BUIlD_MAKE_ARGS
               ccache -s
             fi
-            which gcc
       - save_cache:
           name: Saving Cache upstream-build-v1
           key: upstream-build-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
@@ -104,6 +103,7 @@ jobs:
       - run:
           name: Prepare Target Workspace
           command: |
+            cp ~/ws_upstream/checksum.txt ~/ws_target/checksum.txt
             vcs export --exact ~/ws_target/src >> ~/ws_target/checksum.txt
 
       # Build Target Workspace
