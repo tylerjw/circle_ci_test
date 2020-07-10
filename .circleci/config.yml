@@ -41,11 +41,11 @@ jobs:
             - ~/ws_upstream
 
       # Restore ccace cache
-      - restore_cache:
-          name: Restoring Cache ccache-v1
-          keys:
-            - ccache-v1-{{ .Branch }}-{{ .Revision }}
-            - ccache-v1-
+      # - restore_cache:
+      #     name: Restoring Cache ccache-v1
+      #     keys:
+      #       - ccache-v1-{{ .Branch }}-{{ .Revision }}
+      #       - ccache-v1-
 
       # Build Upstream Workspace
       - restore_cache:
@@ -98,6 +98,7 @@ jobs:
             catkin config --install --extend /opt/ros/$ROS_DISTRO \
               --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
             catkin build --no-status --summarize
+            catkin build --no-status --summarize --make-args tests
       - save_cache:
           name: Saving Cache target-bulid-v1
           key: target-build-v1-{{ checksum "~/ws_target/checksum.txt" }}
@@ -108,8 +109,9 @@ jobs:
             - ~/ws_upstream/logs
             - ~/ws_upstream/.catkin_tools
 
-      - save_cache:
-          name: Saving Cache ccache-v1
-          key: ccache-v1-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - ~/.ccache
+      # Save ccache
+      # - save_cache:
+      #     name: Saving Cache ccache-v1
+      #     key: ccache-v1-{{ .Branch }}-{{ .Revision }}
+      #     paths:
+      #       - ~/.ccache
