@@ -4,6 +4,8 @@ jobs:
   build:
     docker:
       - image: tylerjw/circle_ci_test-melodic:0.0.1
+    environment:
+      TEST_VAL: bla  
     steps:
       # Checkout repo
       - restore_cache:
@@ -31,6 +33,7 @@ jobs:
             mkdir -p ~/ws_upstream/src
             wstool init 
             vcs import ~/ws_upstream/src --shallow --force --input ~/ws_target/src/circle_ci_test/upstream.rosinstall
+            echo $TEST_VAL
       - save_cache:
           name: Saving Cache upstream_ws-v1
           key: upstream_ws-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
