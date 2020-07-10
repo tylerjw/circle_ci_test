@@ -5,7 +5,8 @@ jobs:
     docker:
       - image: tylerjw/circle_ci_test-melodic:0.0.1
     environment:
-      TEST_VAL: bla  
+      CCACHE_MAXSIZE: "500m"
+      CCACHE_PATH: ~/.ccache  
     working_directory: ~/ws_upstream
     steps:
       # Checkout repo
