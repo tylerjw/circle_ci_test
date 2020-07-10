@@ -40,6 +40,13 @@ jobs:
           paths:
             - ~/ws_upstream
 
+      # Restore ccace cache
+      - restore_cache:
+        name: Restoring Cache ccache-v1
+        keys:
+          - ccache-v1-{{ .Branch }}-{{ .Revision }}
+          - ccache-v1-
+
       # Build Upstream Workspace
       - restore_cache:
           name: Restoring Cache upstream-build-v1
@@ -102,3 +109,9 @@ jobs:
             - ~/ws_upstream/install
             - ~/ws_upstream/logs
             - ~/ws_upstream/.catkin_tools
+
+      - save_cache:
+          name: Saving Cache ccache-v1
+          key: ccache-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ~/.ccache
