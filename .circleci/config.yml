@@ -19,7 +19,7 @@ jobs:
           command: apt update -q
       - save_cache:
           name: Saveing Cache apt-lists-v1
-          key: apt-lists-v1-{{ epoc }}
+          key: apt-lists-v1-{{ epoch }}
           paths:
             - /var/lib/apt/lists
 
@@ -51,7 +51,7 @@ jobs:
             vcs export --exact ~/ws_upstream/src >> ~/ws_upstream/checksum.txt
       - save_cache:
           name: Saving Cache upstream-source-v1
-          key: upstream-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ epoch }}
+          key: upstream-source-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ epoch }}
           paths:
             - ~/ws_upstream
 
@@ -71,7 +71,7 @@ jobs:
       - restore_cache:
           name: Restoring Cache upstream-build-v1
           keys:
-            - upstream-bulid-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
+            - upstream-build-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
       - run:
           name: Install Upstream Dependencies
           command: rosdep install -q -y --from-paths ~/ws_upstream/src --ignore-src
@@ -88,8 +88,8 @@ jobs:
             fi
             which gcc
       - save_cache:
-          name: Saving Cache upstream-bulid-v1
-          key: upstream-bulid-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
+          name: Saving Cache upstream-build-v1
+          key: upstream-build-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
           paths:
             - ~/ws_upstream/build
             - ~/ws_upstream/devel
@@ -127,7 +127,7 @@ jobs:
               ccache -s
             fi
       - save_cache:
-          name: Saving Cache target-bulid-v1
+          name: Saving Cache target-build-v1
           key: target-build-v1-{{ checksum "~/ws_target/checksum.txt" }}
           paths:
             - ~/ws_upstream/build
