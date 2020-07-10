@@ -131,6 +131,7 @@ jobs:
           name: Run Target Tests
           working_directory: ~/ws_target
           command: |
+            . /opt/ros/$ROS_DISTRO/setup.bash
             catkin build --catkin-make-args run_tests -- --no-status --summarize
             for file in $(catkin_test_results | grep "\.xml:" | cut -d ":" -f1); do
               cat $file
