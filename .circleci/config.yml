@@ -22,17 +22,30 @@ jobs:
           paths:
             - ~/ws_target/src/circle_ci_test/.git
 
-      # Upstream Workspace
+      # Prepare Upstream Workspace
       - restore_cache:
-          name: Restoring Cache upstream_ws-v1
+          name: Restoring Cache upstream_ws-source-v1
           keys:
-            - upstream_ws-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
-            - upstream_ws-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-
+            - upstream_ws-source-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
+            - upstream_ws-source-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-
       - run:
           name: Prepare Upstream Workspace
           command: |
             mkdir -p ~/ws_upstream/src
             vcs import ~/ws_upstream/src --shallow --force --input ~/ws_target/src/circle_ci_test/upstream.rosinstall
+            vcs export --exact ~/ws_upstream/src >> ~/ws_upstream/checksum.txt
+      - save_cache:
+          name: Saving Cache upstream_ws-source-v1
+          key: upstream_ws-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
+          paths:
+            - ~/ws_upstream
+
+      # Build Upstream Workspace
+      - restore_cache:
+          name: Restoring Cache upstream_ws-build-v1
+          keys:
+            - upstream_ws-build-v1-{{ checksum "~/ws_upstream/checksum.txt" }}-{{ .Revision }}
+            - upstream_ws-build-v1-{{ checksum "~/ws_upstream/checksum.txt" }}-
       - run:
           name: Install Upstream Dependencies
           command: rosdep install -q -y --from-paths ~/ws_upstream/src --ignore-src
@@ -45,10 +58,14 @@ jobs:
               --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
             catkin build --no-status --summarize
       - save_cache:
-          name: Saving Cache upstream_ws-v1
-          key: upstream_ws-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
+          name: Saving Cache upstream_ws-bulid-v1
+          key: upstream_ws-v1-{{ checksum "~/ws_upstream/checksum.txt" }}-{{ .Revision }}
           paths:
-            - ~/ws_upstream
+            - ~/ws_upstream/build
+            - ~/ws_upstream/devel
+            - ~/ws_upstream/install
+            - ~/ws_upstream/logs
+            - ~/ws_upstream/.catkin_tools
 
       # Build Target Workspace
       - run:
