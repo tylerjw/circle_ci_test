@@ -20,11 +20,20 @@ jobs:
           paths:
             - "src/circle_ci_test/.git"
 
+
+      - restore_cache:
+          keys:
+            - upstream_ws-v1-{{ .Branch }}-{{ .Revision }}
+            - upstream_ws-v1-{{ .Branch }}-
+            - upstream_ws-v1-
       - run:
           name: Checkout Upstream Workspace
           command: |
             mkdir -p ~/ws_upstream/src
             wstool init --shallow ~/ws_upstream/src src/circle_ci_test/upstream.rosinstall
             vcs export --exact ~/ws_upstream/src >> ~/ws_upstream/checksum.txt
-            cat ~/ws_upstream/checksum.txt
+      - save_cache:
+          key: upstream_ws-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - "~/ws_upstream/src"
 
