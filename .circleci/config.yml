@@ -6,8 +6,7 @@ jobs:
       - image: tylerjw/circle_ci_test-melodic:0.0.1
     environment:
       CCACHE_MAXSIZE: "500m"
-      CCACHE_PATH: ~/.ccache  
-    working_directory: ~/ws_upstream
+      CCACHE_PATH: ~/.ccache
     steps:
       # Checkout repo
       - restore_cache:
