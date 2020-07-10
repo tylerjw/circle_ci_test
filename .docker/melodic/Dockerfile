@@ -3,35 +3,33 @@
 FROM ros:melodic-ros-base
 
 # install apt dependencies
-RUN apt-get update && apt-get install -q -y \
+RUN apt-get update && apt-get install -qq \
       build-essential \
-      cmake \
-      git \
-      wget \
+      ca-certificates \
       ccache \
-      python-catkin-tools \
-      python-vcstool \
       clang \
       clang-format-3.9 \
       clang-tidy \
       clang-tools \
+      cmake \
+      git \
       gzip \
+      openssh-client \
+      python-catkin-tools \
+      python-vcstool \
       tar \
-      ca-certificates \
+      wget \
     && rm -rf /var/lib/apt/lists/*
 
-# setup workspace
-ENV ROS_WS /opt/ros_ws
-RUN mkdir -p $ROS_WS/src
-COPY . $ROS_WS/src/project
-
 # install dependencies
+RUN mkdir -p /opt/ros_ws/src
+COPY . /opt/ros_ws/src/project
 RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
-    wstool init $ROS_WS/src \
-      $ROS_WS/src/project/upstream.rosinstall && \
+    wstool init --shallow /opt/ros_ws/src \
+      /opt/ros_ws/src/project/upstream.rosinstall && \
     apt-get update && \
     rosdep install -q -y \
-      --from-paths $ROS_WS/src \
+      --from-paths /opt/ros_ws/src \
       --ignore-src && \
-    rm -rf $ROS_WS && \
+    rm -rf /opt/ros_ws && \
     rm -rf /var/lib/apt/lists/*

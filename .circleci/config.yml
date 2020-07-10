@@ -23,7 +23,6 @@ jobs:
       - run:
           name: Checkout Upstream Workspace
           command: |
-            apt install python-vcstool
             mkdir -p ~/ws_upstream/src
             wstool init --shallow ~/ws_upstream/src src/circle_ci_test/upstream.rosinstall
             vcs export --exact ~/ws_upstream/src >> ~/ws_upstream/checksum.txt
