@@ -9,6 +9,7 @@ jobs:
     working_directory: ~/ws_target
     steps:
       - restore_cache:
+          name: Restoring Cache source-v1
           keys:
             - source-v1-{{ .Branch }}-{{ .Revision }}
             - source-v1-{{ .Branch }}-
@@ -16,12 +17,14 @@ jobs:
       - checkout:
           path: src/circle_ci_test
       - save_cache:
+          name: Saving Cache source-v1
           key: source-v1-{{ .Branch }}-{{ .Revision }}
           paths:
             - "src/circle_ci_test/.git"
 
 
       - restore_cache:
+          name: Restoring Cache upstream_ws-v1
           keys:
             - upstream_ws-v1-{{ .Branch }}-{{ .Revision }}
             - upstream_ws-v1-{{ .Branch }}-
@@ -32,6 +35,7 @@ jobs:
             mkdir -p ~/ws_upstream/src
             vcs import ~/ws_upstream/src --shallow --force --input src/circle_ci_test/upstream.rosinstall
       - save_cache:
+          name: Saving Cache upstream_ws-v1
           key: upstream_ws-v1-{{ .Branch }}-{{ .Revision }}
           paths:
             - "~/ws_upstream/src"
