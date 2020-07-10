@@ -4,6 +4,9 @@ jobs:
   build:
     docker:
       - image: tylerjw/circle_ci_test-melodic:0.0.1
+    environment:
+      UPSTREAM_WS: ~/ws_upstream
+      TARGET_WS: ~/ws_target
     steps:
       - restore_cache:
           name: Restoring Cache source-v1
@@ -11,28 +14,28 @@ jobs:
             - source-v1-{{ .Revision }}
             - source-v1-
       - checkout:
-          path: ~/ws_target/src/circle_ci_test
+          path: ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}
       - save_cache:
           name: Saving Cache source-v1
           key: source-v1-{{ .Revision }}
           paths:
-            - ~/ws_target/src/circle_ci_test/.git
+            - ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/.git
 
 
       - restore_cache:
           name: Restoring Cache upstream_ws-v1
           keys:
-            - upstream_ws-v1-{{ checksum ~/ws_target/src/circle_ci_test/upstream.rosinstall }}-{{ .Revision }}
-            - upstream_ws-v1-{{ checksum ~/ws_target/src/circle_ci_test/upstream.rosinstall }}-
+            - upstream_ws-v1-{{ checksum ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall }}-{{ .Revision }}
+            - upstream_ws-v1-{{ checksum ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall }}-
       - run:
           name: Prepare Upstream Workspace
           command: |
             mkdir -p ~/ws_upstream/src
             wstool init 
-            vcs import ~/ws_upstream/src --shallow --force --input ~/ws_target/src/circle_ci_test/upstream.rosinstall
+            vcs import ~/ws_upstream/src --shallow --force --input ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall
       - save_cache:
           name: Saving Cache upstream_ws-v1
-          key: upstream_ws-v1-{{ checksum ~/ws_target/src/circle_ci_test/upstream.rosinstall }}-{{ .Revision }}
+          key: upstream_ws-v1-{{ checksum ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall }}-{{ .Revision }}
           paths:
             - ~/ws_upstream/src
 
