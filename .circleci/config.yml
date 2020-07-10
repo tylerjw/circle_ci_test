@@ -8,14 +8,13 @@ jobs:
       - restore_cache:
           name: Restoring Cache source-v1
           keys:
-            - source-v1-{{ .Branch }}-{{ .Revision }}
-            - source-v1-{{ .Branch }}-
+            - source-v1-{{ .Revision }}
             - source-v1-
       - checkout:
           path: ~/ws_target/src/circle_ci_test
       - save_cache:
           name: Saving Cache source-v1
-          key: source-v1-{{ .Branch }}-{{ .Revision }}
+          key: source-v1-{{ .Revision }}
           paths:
             - ~/ws_target/src/circle_ci_test/.git
 
@@ -23,17 +22,17 @@ jobs:
       - restore_cache:
           name: Restoring Cache upstream_ws-v1
           keys:
-            - upstream_ws-v1-{{ .Branch }}-{{ .Revision }}
-            - upstream_ws-v1-{{ .Branch }}-
-            - upstream_ws-v1-
+            - upstream_ws-v1-{{ checksum ~/ws_target/src/circle_ci_test/upstream.rosinstall }}-{{ .Revision }}
+            - upstream_ws-v1-{{ checksum ~/ws_target/src/circle_ci_test/upstream.rosinstall }}-
       - run:
           name: Prepare Upstream Workspace
           command: |
             mkdir -p ~/ws_upstream/src
-            vcs import ~/ws_upstream/src --shallow --force --input src/circle_ci_test/upstream.rosinstall
+            wstool init 
+            vcs import ~/ws_upstream/src --shallow --force --input ~/ws_target/src/circle_ci_test/upstream.rosinstall
       - save_cache:
           name: Saving Cache upstream_ws-v1
-          key: upstream_ws-v1-{{ .Branch }}-{{ .Revision }}
+          key: upstream_ws-v1-{{ checksum ~/ws_target/src/circle_ci_test/upstream.rosinstall }}-{{ .Revision }}
           paths:
             - ~/ws_upstream/src
 
