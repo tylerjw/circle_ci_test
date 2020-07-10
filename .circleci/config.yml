@@ -24,10 +24,10 @@ jobs:
 
       # Upstream Workspace
       - restore_cache:
-          name: Restoring Cache upstream_ws-v2
+          name: Restoring Cache upstream_ws-v1
           keys:
-            - upstream_ws-v2-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
-            - upstream_ws-v2-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-
+            - upstream_ws-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
+            - upstream_ws-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-
       - run:
           name: Prepare Upstream Workspace
           command: |
@@ -45,7 +45,7 @@ jobs:
               --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
             catkin build --no-status --summarize
       - save_cache:
-          name: Saving Cache upstream_ws-v2
+          name: Saving Cache upstream_ws-v1
           key: upstream_ws-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
           paths:
             - ~/ws_upstream
