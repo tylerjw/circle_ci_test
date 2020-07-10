@@ -7,6 +7,7 @@ jobs:
     environment:
       CCACHE_MAXSIZE: 500M
       BUIlD_MAKE_ARGS: "-j 2 -l 2"
+      TZ: utc
     steps:
       # Checkout repo
       - restore_cache:
@@ -68,6 +69,7 @@ jobs:
             catkin config --install --extend /opt/ros/$ROS_DISTRO \
               --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
             catkin build --no-status --summarize --make-args $BUIlD_MAKE_ARGS
+            ccache -s
       - save_cache:
           name: Saving Cache upstream-bulid-v1
           key: upstream-bulid-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
@@ -80,7 +82,7 @@ jobs:
 
       # Prepare Target Workspace
       - run:
-          name: Prepare Upstream Workspace
+          name: Prepare Target Workspace
           command: |
             vcs export --exact ~/ws_target/src >> ~/ws_target/checksum.txt
 
@@ -104,6 +106,7 @@ jobs:
               --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
             catkin build --no-status --summarize --make-args $BUIlD_MAKE_ARGS
             catkin build --no-status --summarize --make-args tests
+            ccache -s
       - save_cache:
           name: Saving Cache target-bulid-v1
           key: target-build-v1-{{ checksum "~/ws_target/checksum.txt" }}
