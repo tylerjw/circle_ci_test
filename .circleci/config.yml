@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: tylerjw/circle_ci_test-melodic:0.0.1
+      - image: ros:melodic-ros-base
     environment:
       UPSTREAM_ROSINSTALL: upstream.rosinstall
     working_directory: ~/ws_target
