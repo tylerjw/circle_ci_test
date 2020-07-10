@@ -115,3 +115,12 @@ jobs:
       #     key: ccache-v1-{{ .Branch }}-{{ .Revision }}
       #     paths:
       #       - ~/.ccache
+
+      # Run Target Tests
+      - run:
+          name: Run Target Tests
+          working_directory: ~/ws_target
+          command: |
+            catkin build --catkin-make-args run_tests -- --no-status --summarize
+            catkin_test_results
+            ccache -s
