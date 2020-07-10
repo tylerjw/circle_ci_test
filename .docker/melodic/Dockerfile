@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -q -y \
       wget \
       ccache \
       python-catkin-tools \
+      python-vcstool \
       clang \
       clang-format-3.9 \
       clang-tidy \

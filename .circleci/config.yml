@@ -8,14 +8,24 @@ jobs:
       UPSTREAM_ROSINSTALL: upstream.rosinstall
     working_directory: ~/ws_target
     steps:
-      # - restore_cache:
-      #     keys:
-      #       - source-v1-{{ .Branch }}-{{ .Revision }}
-      #       - source-v1-{{ .Branch }}-
-      #       - source-v1-
+      - restore_cache:
+          keys:
+            - source-v1-{{ .Branch }}-{{ .Revision }}
+            - source-v1-{{ .Branch }}-
+            - source-v1-
       - checkout:
           path: src/circle_ci_test
-      # - save_cache:
-      #     key: source-v1-{{ .Branch }}-{{ .Revision }}
-      #     paths:
-      #       - "src/circle_ci_test/.git"
+      - save_cache:
+          key: source-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - "src/circle_ci_test/.git"
+
+      - run:
+          name: Checkout Upstream Workspace
+          command: |
+            apt install python-vcstool
+            mkdir -p ~/ws_upstream/src
+            wstool init --shallow ~/ws_upstream/src src/circle_ci_test/upstream.rosinstall
+            vcs export --exact ~/ws_upstream/src >> ~/ws_upstream/checksum.txt
+            cat ~/ws_upstream/checksum.txt
+
