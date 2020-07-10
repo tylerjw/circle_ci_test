@@ -140,5 +140,5 @@ jobs:
               cat $file
             done
 
-      - store_artifacts:
+      - store_test_results:
             path: ~/ws_target/test_results
