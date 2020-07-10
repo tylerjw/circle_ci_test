@@ -25,17 +25,17 @@ jobs:
       - restore_cache:
           name: Restoring Cache upstream_ws-v1
           keys:
-            - upstream_ws-v1-{{ checksum ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall }}-{{ .Revision }}
-            - upstream_ws-v1-{{ checksum ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall }}-
+            - upstream_ws-v1-{{ checksum "~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall" }}-{{ .Revision }}
+            - upstream_ws-v1-{{ checksum "~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall" }}-
       - run:
           name: Prepare Upstream Workspace
           command: |
             mkdir -p ~/ws_upstream/src
             wstool init 
-            vcs import ~/ws_upstream/src --shallow --force --input ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall
+            vcs import ~/ws_upstream/src --shallow --force --input "~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall"
       - save_cache:
           name: Saving Cache upstream_ws-v1
-          key: upstream_ws-v1-{{ checksum ~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall }}-{{ .Revision }}
+          key: upstream_ws-v1-{{ checksum "~/ws_target/src/${CIRCLE_PROJECT_REPONAME}/upstream.rosinstall" }}-{{ .Revision }}
           paths:
             - ~/ws_upstream/src
 
