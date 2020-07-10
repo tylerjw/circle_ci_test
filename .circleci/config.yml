@@ -26,7 +26,7 @@ jobs:
       - restore_cache:
           name: Restoring Cache upstream-source-v1
           keys:
-            - upstream-source-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
+            - upstream-source-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ epoch }}
             - upstream-source-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-
       - run:
           name: Prepare Upstream Workspace
@@ -36,23 +36,22 @@ jobs:
             vcs export --exact ~/ws_upstream/src >> ~/ws_upstream/checksum.txt
       - save_cache:
           name: Saving Cache upstream-source-v1
-          key: upstream-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ .Revision }}
+          key: upstream-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ epoch }}
           paths:
             - ~/ws_upstream
 
       # Restore ccace cache
       - restore_cache:
-        name: Restoring Cache ccache-v1
-        keys:
-          - ccache-v1-{{ .Branch }}-{{ .Revision }}
-          - ccache-v1-
+          name: Restoring Cache ccache-v1
+          keys:
+            - ccache-v1-{{ .Branch }}-{{ .Revision }}
+            - ccache-v1-
 
       # Build Upstream Workspace
       - restore_cache:
           name: Restoring Cache upstream-build-v1
           keys:
-            - upstream-build-v1-{{ checksum "~/ws_upstream/checksum.txt" }}-{{ .Revision }}
-            - upstream-build-v1-{{ checksum "~/ws_upstream/checksum.txt" }}-
+            - upstream-bulid-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
       - run:
           name: Install Upstream Dependencies
           command: rosdep install -q -y --from-paths ~/ws_upstream/src --ignore-src
@@ -66,7 +65,7 @@ jobs:
             catkin build --no-status --summarize
       - save_cache:
           name: Saving Cache upstream-bulid-v1
-          key: upstream-v1-{{ checksum "~/ws_upstream/checksum.txt" }}-{{ .Revision }}
+          key: upstream-bulid-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
           paths:
             - ~/ws_upstream/build
             - ~/ws_upstream/devel
@@ -84,8 +83,7 @@ jobs:
       - restore_cache:
           name: Restoring Cache target-build-v1
           keys:
-            - target-build-v1-{{ checksum "~/ws_target/checksum.txt" }}-{{ .Revision }}
-            - target-build-v1-{{ checksum "~/ws_target/checksum.txt" }}-
+            - target-build-v1-{{ checksum "~/ws_target/checksum.txt" }}
       - run:
           name: Install Target Dependencies
           command: |
@@ -102,7 +100,7 @@ jobs:
             catkin build --no-status --summarize
       - save_cache:
           name: Saving Cache target-bulid-v1
-          key: target-v1-{{ checksum "~/ws_target/checksum.txt" }}-{{ .Revision }}
+          key: target-build-v1-{{ checksum "~/ws_target/checksum.txt" }}
           paths:
             - ~/ws_upstream/build
             - ~/ws_upstream/devel
