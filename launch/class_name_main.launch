@@ -5,7 +5,7 @@
   <arg name="debug" default="false" />
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
   <arg     if="$(arg debug)" name="launch_prefix"
-           value="gdb -x $(find ci_test)/launch/gdb_settings.gdb --ex run --args" />
+           value="gdb -x $(find circle_ci_test)/launch/gdb_settings.gdb --ex run --args" />
 
   <!-- Callgrind Arguments -->
   <arg name="callgrind" default="false" />
@@ -18,10 +18,10 @@
   <arg     if="$(arg valgrind)" name="launch_prefix3" value="valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all" />
 
   <!-- Launch main node -->
-  <node name="$(anon ci_test)" launch-prefix="$(arg launch_prefix) $(arg launch_prefix2) $(arg launch_prefix3)" pkg="ci_test" type="class_name_main" respawn="false" output="screen">
+  <node name="$(anon circle_ci_test)" launch-prefix="$(arg launch_prefix) $(arg launch_prefix2) $(arg launch_prefix3)" pkg="circle_ci_test" type="class_name_main" respawn="false" output="screen">
 
     <!-- Robot-specific settings -->
-    <rosparam file="$(find ci_test)/config/setup.yaml" command="load"/>
+    <rosparam file="$(find circle_ci_test)/config/setup.yaml" command="load"/>
   </node>
 
 </launch>

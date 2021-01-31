@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
-  <test pkg="ci_test" type="class_name_test" test-name="class_name_test" time-limit="300" args="">
-    <rosparam command="load" file="$(find ci_test)/config/setup.yaml"/>
+  <test pkg="circle_ci_test" type="class_name_test" test-name="class_name_test" time-limit="300" args="">
+    <rosparam command="load" file="$(find circle_ci_test)/config/setup.yaml"/>
   </test>
 </launch>

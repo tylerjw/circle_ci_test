@@ -38,7 +38,7 @@
 
 // ROS
 #include <ros/ros.h>
-#include <ci_test/class_name.h>
+#include <circle_ci_test/class_name.h>
 
 int main(int argc, char** argv)
 {
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
   spinner.start();
 
   // Initialize main class
-  ci_test::ClassName server;
+  circle_ci_test::ClassName server;
 
   // Shutdown
   ROS_INFO_STREAM_NAMED("main", "Shutting down.");

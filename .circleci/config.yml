@@ -1,13 +1,167 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-# Use a package of configuration called an orb.
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
-workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
-    jobs:
-      - welcome/run
+
+jobs:
+  build:
+    docker:
+      - image: tylerjw/circle_ci_test-melodic:0.0.1
+    environment:
+      CCACHE_MAXSIZE: 500M
+      BUIlD_MAKE_ARGS: "-j 2 -l 2"
+      TZ: utc
+    steps:
+      # Update apt for rosdep
+      - restore_cache:
+          name: Restoring apt-lists-v1
+          keys:
+            - apt-lists-v1-
+      - run:
+          name: apt update
+          command: apt update -q
+      - save_cache:
+          name: Saveing Cache apt-lists-v1
+          key: apt-lists-v1-{{ epoch }}
+          paths:
+            - /var/lib/apt/lists
+
+      # Checkout repo
+      - restore_cache:
+          name: Restoring Cache source-v1
+          keys:
+            - source-v1-{{ .Revision }}
+            - source-v1-
+      - checkout:
+          path: ~/ws_target/src/circle_ci_test
+      - save_cache:
+          name: Saving Cache source-v1
+          key: source-v1-{{ .Revision }}
+          paths:
+            - ~/ws_target/src/circle_ci_test/.git
+
+      # Prepare Upstream Workspace
+      - restore_cache:
+          name: Restoring Cache upstream-source-v1
+          keys:
+            - upstream-source-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ epoch }}
+            - upstream-source-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-
+      - run:
+          name: Prepare Upstream Workspace
+          command: |
+            mkdir -p ~/ws_upstream/src
+            vcs import ~/ws_upstream/src --shallow --force --input ~/ws_target/src/circle_ci_test/upstream.rosinstall
+            vcs export --exact ~/ws_upstream/src >> ~/ws_upstream/checksum.txt
+      - save_cache:
+          name: Saving Cache upstream-source-v1
+          key: upstream-source-v1-{{ checksum "~/ws_target/src/circle_ci_test/upstream.rosinstall" }}-{{ epoch }}
+          paths:
+            - ~/ws_upstream
+
+      # Restore ccace cache
+      - restore_cache:
+          name: Restoring Cache ccache-v1
+          keys:
+            - ccache-v1-{{ .Branch }}-{{ .Revision }}
+            - ccache-v1-
+
+      # Print ccache stats
+      - run:
+          name: ccache stats
+          command: |
+            ccache -s
+            echo 'export PATH=/usr/lib/ccache:$PATH' >> $BASH_ENV
+
+      # Build Upstream Workspace
+      - restore_cache:
+          name: Restoring Cache upstream-build-v1
+          keys:
+            - upstream-build-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
+      - run:
+          name: Install Upstream Dependencies
+          command: rosdep install -q -y --from-paths ~/ws_upstream/src --ignore-src
+      - run:
+          name: Build Upstream Workspace
+          working_directory: ~/ws_upstream
+          command: |
+            which gcc
+            . /opt/ros/$ROS_DISTRO/setup.bash
+            if [ ! -d ~/ws_upstream/build ]; then
+              catkin config --install --extend /opt/ros/$ROS_DISTRO \
+                --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
+              catkin build --no-status --summarize --make-args $BUIlD_MAKE_ARGS
+              ccache -s
+            fi
+      - save_cache:
+          name: Saving Cache upstream-build-v1
+          key: upstream-build-v1-{{ checksum "~/ws_upstream/checksum.txt" }}
+          paths:
+            - ~/ws_upstream/build
+            - ~/ws_upstream/devel
+            - ~/ws_upstream/install
+            - ~/ws_upstream/logs
+            - ~/ws_upstream/.catkin_tools
+
+      # Prepare Target Workspace
+      - run:
+          name: Prepare Target Workspace
+          command: |
+            cp ~/ws_upstream/checksum.txt ~/ws_target/checksum.txt
+            vcs export --exact ~/ws_target/src >> ~/ws_target/checksum.txt
+
+      # Build Target Workspace
+      - restore_cache:
+          name: Restoring Cache target-build-v1
+          keys:
+            - target-build-v1-{{ checksum "~/ws_target/checksum.txt" }}
+      - run:
+          name: Install Target Dependencies
+          command: |
+            rosdep install -q -y --ignore-src \
+              --from-paths ~/ws_target/src \
+              --from-paths ~/ws_upstream/src
+      - run:
+          name: Build Target Workspace
+          working_directory: ~/ws_target
+          command: |
+            . /opt/ros/$ROS_DISTRO/setup.bash
+            if [ ! -d ~/ws_upstream/build ]; then
+              catkin config --install --extend /opt/ros/$ROS_DISTRO \
+                --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE=-O3 --
+              catkin build --no-status --summarize --make-args $BUIlD_MAKE_ARGS
+              catkin build --no-status --summarize --make-args tests
+              ccache -s
+            fi
+      - save_cache:
+          name: Saving Cache target-build-v1
+          key: target-build-v1-{{ checksum "~/ws_target/checksum.txt" }}
+          paths:
+            - ~/ws_upstream/build
+            - ~/ws_upstream/devel
+            - ~/ws_upstream/install
+            - ~/ws_upstream/logs
+            - ~/ws_upstream/.catkin_tools
+
+      # Save ccache
+      - save_cache:
+          name: Saving Cache ccache-v1
+          key: ccache-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ~/.ccache
+
+      # Print ccache stats
+      - run:
+          name: ccache stats
+          command: ccache -s
+
+      # Run Target Tests
+      - run:
+          name: Run Target Tests
+          working_directory: ~/ws_target
+          command: |
+            . /opt/ros/$ROS_DISTRO/setup.bash
+            catkin build --catkin-make-args run_tests -- --no-status --summarize
+            catkin_test_results
+            mkdir -p ~/test_results
+            for file in $(catkin_test_results --all | grep "\.xml:" | cut -d ":" -f1); do
+              cp $file ~/test_results
+            done
+      - store_test_results:
+            path: ~/test_results
